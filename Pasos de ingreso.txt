@@ -1,0 +1,25 @@
+Primero creamos el Rol de Administrador
+INSERT INTO Rol (nombre, descripcion)
+VALUES ('Administrador del Sistema', 'Acceso total a todos los módulos y configuración');
+
+Segundo Creamos el Departamento de Sistemas (si no existe aún)
+INSERT INTO Departamento (nombre, ubicacion)
+VALUES ('Sistemas / TI', 'Oficina Central - Servidores');
+
+Tercero Creamos el Usuario (Login)
+-- Nota: En un sistema real, el hash_password debería ser generado por tu backend (ej. Bcrypt)
+INSERT INTO Usuario (nombre_usuario, hash_password, fecha_ultimo_acceso)
+VALUES ('admin', '12345', NOW());
+
+Cuarto Finalmente, creamos al Empleado "Admin" vinculando todo
+-- Usamos LAST_INSERT_ID() para obtener los IDs que se acaban de autogenerar arriba
+INSERT INTO Empleado (usuario_id, departamento_id, rol_id, nombre, apellido, email, codigo_empleado)
+VALUES (
+    (SELECT usuario_id FROM Usuario WHERE nombre_usuario = 'admin'),      -- ID del usuario 'admin'
+    (SELECT departamento_id FROM Departamento WHERE nombre = 'Sistemas / TI' LIMIT 1), -- ID del depto
+    (SELECT rol_id FROM Rol WHERE nombre = 'Administrador del Sistema' LIMIT 1), -- ID del rol
+    'Super',
+    'Admin',
+    'admin@empresa.com',
+    'SYS-001'
+);
